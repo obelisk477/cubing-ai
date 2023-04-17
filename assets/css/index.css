@@ -1,0 +1,110 @@
+body {
+    background-color: rgb(111, 150, 201);
+    font-family: 'Courier New', Courier, monospace;
+}
+
+main {
+    display: flex;
+    justify-content: space-evenly;
+    height: 700px;
+    margin-top: 100px;
+
+}
+
+.card {
+    background-color: #e7e7e7;
+    margin: 30px;
+    border-radius: 15px;
+    box-shadow: 3px 3px 8px rgb(42, 57, 77);
+    padding: 20px;
+    
+}
+
+.card h2 {
+    margin-top: 30%;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600
+}
+
+.card p {
+    text-align: center;
+    margin: 75px auto 0;
+    font-size: 1.25rem;
+    overflow-wrap:break-word;
+}
+
+#scramble {
+    font-weight: bolder;
+}
+
+
+.table-container {
+    height:75%;
+    overflow: auto;
+}
+
+.time-table, .scramble {
+    flex: 1;
+}
+
+
+.timer-card {
+    flex: 2;
+}
+
+#stats {
+    display: flex;
+}
+
+#stats table {
+    width: 90%;
+    margin: 0 auto;
+}
+#stats tr {
+    background-color: transparent;
+}
+#stats th {
+    font-size: 1rem;
+    font-weight: bolder;
+}
+
+table {
+    width: 90%;
+    margin: 0 auto;
+}
+
+tr:nth-child(odd) {
+    background-color: rgb(104, 161, 152);
+}
+
+tr > th:nth-child(1),tr > td:nth-child(1) {
+    background-color: #e7e7e7;
+    width: 20px;
+}
+
+td, th {
+    /* border: 1px solid rgb(116, 115, 115); */
+    padding: 5px;
+    width:45%;
+    text-align: center;
+    font-size: .9rem;
+    font-weight: bolder;
+    border-radius: 25px;
+}
+
+td > span:hover {
+    cursor: pointer;
+}
+
+.scramble {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.scramble button {
+    margin: 40%;
+    height: 20px;
+}
+

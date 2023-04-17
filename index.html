@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cube Timer</title>
+    <script src="https://cdn.cubing.net/js/cubing/twisty" type="module"></script>
+    <script src="./assets/js/BrainJS.js" type="module"></script>
+    <link rel="stylesheet" href="./assets/css/index.css">
+</head>
+<body>
+    <header></header>
+    <main>
+        <div class ="card time-table">
+            <div class="table-container">
+                <table>
+                    <tr>
+                        <th></th>
+                        <th>Solve #</th>
+                        <th>Time</th>
+                    </tr>
+                </table>
+            </div>
+            <div id="stats">
+                <table id="best-avg">
+                    <tr>
+                        <th>Best</th>
+                        <th>Calc</th>
+                    </tr>
+                    <tr>
+                        <td>Ao3</td>
+                        <td>--</td>
+                    </tr>
+                    <tr>
+                        <td>Ao5</td>
+                        <td>--</td>
+                    </tr>
+                    <tr>
+                        <td>Ao12</td>
+                        <td>--</td>
+                    </tr>
+                </table>
+                <table id="current-avg">
+                    <tr>
+                        <th>Current</th>
+                        <th>Calc</th>
+                    </tr>
+                    <tr>
+                        <td>Ao3</td>
+                        <td>--</td>
+                    </tr>
+                    <tr>
+                        <td>Ao5</td>
+                        <td>--</td>
+                    </tr>
+                    <tr>
+                        <td>Ao12</td>
+                        <td>--</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class ="card timer-card">
+            <p id="scramble">Loading...</p>
+            <h2 id="timer">0.00</h2>
+            <p><em>Press spacebar to begin timer</em></p>
+        </div>
+        <div class ="card scramble">
+            <h2>Hello</h2>
+            <button id="train">Train</button>
+        </div>
+    </main>
+    <footer></footer>
+<script src="./assets/js/app.js" type="module"></script>
+
+</body>
+</html>
