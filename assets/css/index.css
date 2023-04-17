@@ -82,6 +82,10 @@ main {
     flex: 2;
 }
 
+#timer {
+font-family: 'Courier New', Courier, monospace;
+}
+
 #stats {
     display: flex;
     margin-top: 20px;
@@ -125,7 +129,6 @@ td, th {
     font-weight: bolder;
     border-radius: 5px;
 }
-
 
 td > span:hover {
     cursor: pointer;

@@ -115,7 +115,7 @@ let updateTimeLog = async function(time) {
     addTableData(arr)
     getScramble()
     updateStats()
-    
+
     let timeTable = document.querySelector('.table-container')
     timeTable.scrollTop = timeTable.scrollHeight;
 
@@ -135,6 +135,24 @@ function updateStats() {
 
 function avgLastNofArr(arr, n) {
     arr = arr.slice(-n)
+    let numTimesToRemove
+
+    if (n==3) {
+        numTimesToRemove = 0
+    } else if (n==5 || n==12) {
+        numTimesToRemove = 2
+    } else {
+        numTimesToRemove = Math.round(.1*arr.length)
+    }
+
+    if (numTimesToRemove != 0) {
+        let half = Math.round(numTimesToRemove/2)
+        for (let i = 0; i < half; i++) {
+            arr.splice(arr.indexOf(Math.max(...arr)),1)
+            arr.splice(arr.indexOf(Math.min(...arr)),1)
+        }
+    }
+
     return arr.reduce((total,current) => total + current)/arr.length
 }
 
@@ -168,9 +186,9 @@ let handleDelete = function(event) {
     let timeTable = document.querySelectorAll('.table-container > table tr')
 
     for (let j=1; j < timeTable.length; j++) {
-        console.log(j)
         timeTable[j].querySelectorAll('td')[1].innerText = j
     }
+    updateStats()
 }
 
 let timerStart = function(event) {
@@ -206,4 +224,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     let myArr = JSON.parse(localStorage.getItem('times'))
     addTableData(myArr)
+    updateStats()
 })
