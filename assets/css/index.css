@@ -1,21 +1,50 @@
 body {
-    background-color: rgb(111, 150, 201);
-    font-family: 'Courier New', Courier, monospace;
+    background-color:#182C2D;
+    font-family: 'Jura', sans-serif;
+}
+
+header {
+    margin: 10px auto;
+    border-bottom: solid 2px #BF5443;
+}
+
+nav, nav ul {
+    display: flex;
+    margin: 0;
+    justify-content: right;
+}
+
+nav ul {
+    padding-right: 20px;
+}
+
+nav li {
+    display: inline;
+    margin: 10px 30px;
+    font-size: 1.5rem;
+    color: white
 }
 
 main {
     display: flex;
     justify-content: space-evenly;
-    height: 700px;
-    margin-top: 100px;
+    height: 600px;
+    margin-top: 150px;
+}
 
+#main-bg {
+    position: absolute;
+    top:0;
+    right: 70px;
+    width: 1100px;
+    z-index: -1;
 }
 
 .card {
-    background-color: #e7e7e7;
+    background-color: rgba(238, 230, 230, 0.767);
     margin: 30px;
-    border-radius: 15px;
-    box-shadow: 3px 3px 8px rgb(42, 57, 77);
+    border-radius: 5px;
+    box-shadow: 3px 3px 8px rgb(8, 8, 8);
     padding: 20px;
     
 }
@@ -55,6 +84,7 @@ main {
 
 #stats {
     display: flex;
+    margin-top: 20px;
 }
 
 #stats table {
@@ -69,13 +99,17 @@ main {
     font-weight: bolder;
 }
 
+#stats td, #stats th {
+    padding: 5px;
+}
+
 table {
     width: 90%;
     margin: 0 auto;
 }
 
 tr:nth-child(odd) {
-    background-color: rgb(104, 161, 152);
+    background-color:#BF5443;
 }
 
 tr > th:nth-child(1),tr > td:nth-child(1) {
@@ -84,14 +118,14 @@ tr > th:nth-child(1),tr > td:nth-child(1) {
 }
 
 td, th {
-    /* border: 1px solid rgb(116, 115, 115); */
-    padding: 5px;
+    padding: 2px;
     width:45%;
     text-align: center;
     font-size: .9rem;
     font-weight: bolder;
-    border-radius: 25px;
+    border-radius: 5px;
 }
+
 
 td > span:hover {
     cursor: pointer;
