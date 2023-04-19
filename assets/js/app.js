@@ -21,6 +21,9 @@ function processDataForNN(preProcessedData) {
     let minTime = Math.min(...outputArr)
     let maxMinusMin = Math.max(...outputArr) - minTime
 
+    console.log("MMM >>>> ", maxMinusMin)
+    console.log("min >>>> ", minTime)
+
     for (let j=0; j<outputArr.length; j++) {
         outputArr[j] = (outputArr[j]-minTime)/maxMinusMin
     }
@@ -35,24 +38,26 @@ function processDataForNN(preProcessedData) {
     return modifiedTrainingData
 }
 
-function trainNN(trainingData) {
+function trainNN(trainingData, netName) {
     const config = {
         binaryThresh: 0.5,
-        hiddenLayers: [3], // array of ints for the sizes of the hidden layers in the network
+        hiddenLayers: [3,3,3], // array of ints for the sizes of the hidden layers in the network
         activation: 'sigmoid', // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
         leakyReluAlpha: 0.01, // supported for activation type 'leaky-relu'
+        learningRate: 0.3
     };
     
     // create a simple feed forward neural network with backpropagation
     const net = new brain.NeuralNetwork(config);
     net
-        .trainAsync(trainingData, {log: true, iterations: 300})
+        .trainAsync(trainingData, {log: true, iterations: 20000, logPeriod: 100})
         .then((res) => {
-            localStorage.setItem('net', JSON.stringify(net.toFunction().toString()))
+            localStorage.setItem(netName, JSON.stringify(net.toFunction().toString()))
         })
         .catch((e) => {
             console.log(e)
         })
+    return net
 }
 
 function runTraining() {
@@ -63,7 +68,7 @@ function runTraining() {
     let parsedTraningData = processDataForNN(myTrainingData)
 
     // Train NN on processed data
-    trainNN(parsedTraningData)
+    trainNN(parsedTraningData, 'net')
 }
 
 async function getScramble() {
@@ -72,7 +77,7 @@ async function getScramble() {
     scrambleElem.innerText = "Loading..."
 
     // Get saved NN and make into function
-    let net = JSON.parse(localStorage.getItem('net'))
+    let net = JSON.parse(localStorage.getItem('EllisNet'))
     var myFunc = eval('(' + net + ')');
 
     // Get scramble and puzzle instance from cubing.js CDN
@@ -80,8 +85,12 @@ async function getScramble() {
     let kPuzzle = await puzzles['3x3x3']['kpuzzle']()
 
     // Turn scramble into array of piece info and pass into NN, saving value of difficulty
-    let transformationData = kPuzzle.algToTransformation(scramble).transformationData
-    let mergedArr = Object.values(transformationData).flatMap(pieceData => [...pieceData.orientation, ...pieceData.permutation])
+    let transformationData = kPuzzle.algToTransformation("U' F2 D' R2 F2 U' L2 B2 D L2 U' F2 R' F2 L' B2 R' B' R D").transformationData
+    let eo = transformationData.EDGES.orientation.map(x => x/Math.max(...transformationData.EDGES.orientation))
+    let ep = transformationData.EDGES.permutation.map(x => x/Math.max(...transformationData.EDGES.permutation))
+    let co = transformationData.CORNERS.orientation.map(x => x/Math.max(...transformationData.CORNERS.orientation))
+    let cp = transformationData.CORNERS.permutation.map(x => x/Math.max(...transformationData.CORNERS.permutation))
+    let mergedArr = [...eo, ...ep, ...co, ...cp]
     let scrambleDifficulty = myFunc(mergedArr)
     console.log(scrambleDifficulty)
 
@@ -94,11 +103,19 @@ async function getScramble() {
     return
 }
 
-let updateTimeLog = async function(time) {
+async function processKPuzzle(scram) {
     let kPuzzle = await puzzles['3x3x3']['kpuzzle']()
-    let transformationData = kPuzzle.algToTransformation(scrambleElem.innerText).transformationData
-    let mergedArr = Object.values(transformationData).flatMap(pieceData => [...pieceData.orientation, ...pieceData.permutation])
+    let transformationData = kPuzzle.algToTransformation(scram).transformationData
+    let eo = transformationData.EDGES.orientation.map(x => x/Math.max(...transformationData.EDGES.orientation))
+    let ep = transformationData.EDGES.permutation.map(x => x/Math.max(...transformationData.EDGES.permutation))
+    let co = transformationData.CORNERS.orientation.map(x => x/Math.max(...transformationData.CORNERS.orientation))
+    let cp = transformationData.CORNERS.permutation.map(x => x/Math.max(...transformationData.CORNERS.permutation))
+    let mergedArr = [...eo, ...ep, ...co, ...cp]
+    return mergedArr
+}
 
+let updateTimeLog = async function(time) {
+    let mergedArr = await processKPuzzle(scrambleElem.innerText)
     if (!localStorage.getItem('times')) {
         localStorage.setItem('times',JSON.stringify([[time,scrambleElem.innerText,mergedArr]]))
         arr = JSON.parse(localStorage.getItem('times'))
@@ -130,7 +147,6 @@ function updateStats() {
     for (let k=0; k < currentTds.length; k++) {
         currentTds[k].innerText = currentStats[k].toFixed(2)
     }
-      
 }
 
 function avgLastNofArr(arr, n) {
@@ -169,7 +185,7 @@ let addTableData = function(arr) {
         closeBtnCell.appendChild(btnSpan)
         newRow.append(closeBtnCell, newSolveNum, newTime)
         newSolveNum.innerText = arr.length == 1 ? lastEntry + 1 : j
-        newTime.innerText = arr[j-1][0]
+        newTime.innerText = arr[j-1][0].toFixed(2)
         tableBody.appendChild(newRow)
     }
 }
@@ -193,6 +209,7 @@ let handleDelete = function(event) {
 
 let timerStart = function(event) {
     if (event.code == 'Space' && !isRunning) {
+        timer.style.color = "black"
         const init = Date.now()
         isRunning = true
         interval = setInterval(() => {
@@ -208,11 +225,45 @@ let timerStart = function(event) {
 let timerStop = function(event) {
     if (event.code == 'Space' && isRunning) {
         clearInterval(interval)   
+    } else if (event.code == 'Space' && !isRunning) {
+        timer.style.color = "green"
     }
 }
 
 //Get first 3x3 scramble
 getScramble()
+
+
+// function logData() {
+//     fetch("./assets/Ellis_solves.csv")
+//         .then(response => response.text())
+//         .then(data => {
+//         // Split the data into an array of lines
+//         var lines = data.split('\r\n');
+
+//         // Loop through each line
+//         lines = lines.map((line) => [Number(line.split(',')[1]),line.split(',')[2]])
+
+//         for (let j=0; j<lines.length; j++) {
+//             let kdata = processKPuzzle(lines[j][1]).then((value) => {
+//                 lines[j].push(value)
+//                 console.log(value.length)
+//                 if (j == lines.length - 1) {
+//                     lines = processDataForNN(lines)
+//                     console.log(lines)
+
+//                     trainNN(lines, 'EllisNet')
+                
+//                 }
+//             })
+//         }
+
+//         })
+//         .catch(error => console.log(error));
+// }
+
+// logData()
+
 
 // Event Listeners
 document.addEventListener('keyup', timerStart)
