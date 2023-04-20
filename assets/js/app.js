@@ -172,14 +172,22 @@ let updateTimeLog = async function(time) {
 function updateStats() {
     let data = JSON.parse(localStorage.getItem('times'))
     let currentTds = document.getElementById('current-avg').querySelectorAll('tr td:nth-child(2)')
+    let bestTimes = document.getElementById('best-avg').querySelectorAll('tr td:nth-child(2)')
     let justTimes = data.map(row => row[0])
     let currentStats = [avgLastNofArr(justTimes,3),avgLastNofArr(justTimes,5),avgLastNofArr(justTimes,12)]
     for (let k=0; k < currentTds.length; k++) {
         currentTds[k].innerText = currentStats[k].toFixed(2)
+
+        if (bestTimes[k].innerText == '--' || Number(currentTds[k].innerText) < Number(bestTimes[k].innerText)) {
+            bestTimes[k].innerText = currentTds[k].innerText
+        }
     }
 }
 
 function avgLastNofArr(arr, n) {
+    if (arr.length < n) {
+        return '--'
+    }
     arr = arr.slice(-n)
     let numTimesToRemove
 
