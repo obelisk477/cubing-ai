@@ -79,6 +79,7 @@ function trainNN(trainingData, netName) {
         .trainAsync(trainingData, {log: true, iterations: 5000, logPeriod: 50})
         .then((res) => {
             localStorage.setItem(netName, JSON.stringify(net.toFunction().toString()))
+            localStorage.setItem('EllisNetObj', JSON.stringify(net.toJSON()))
             console.log("trained")
             prepTestData()
         
@@ -124,7 +125,7 @@ async function getScramble() {
     console.log(scrambleDifficulty)
 
     // Check if scramble hard enough and log to screen
-    if (scrambleDifficulty > .9) {
+    if (scrambleDifficulty < .1) {
         scrambleElem.innerText = scramble
     } else {
         getScramble()
@@ -306,3 +307,4 @@ document.addEventListener('DOMContentLoaded', () => {
     addTableData(myArr)
     updateStats()
 })
+
