@@ -1086,7 +1086,7 @@ let addTableData = function(arr) {
 }
 
 let handleDelete = function(event) {
-    let parentRow = event.srcElement.parentElement.parentElement
+    let parentRow = event.currentTarget.parentElement
     let index = Number(parentRow.querySelectorAll('td')[1].innerText) - 1
     let storedTimes = JSON.parse(localStorage.getItem('times'))
 
