@@ -29,7 +29,9 @@ main {
     display: flex;
     justify-content: space-evenly;
     height: 600px;
-    margin-top: 125px;
+    width:90%;
+    margin: 0 auto;
+    margin-top: 60px;
 }
 
 #main-bg {
@@ -130,7 +132,7 @@ td, th {
     border-radius: 5px;
 }
 
-td > span:hover {
+tr > td:nth-child(1):hover {
     cursor: pointer;
 }
 
@@ -145,3 +147,46 @@ td > span:hover {
     height: 20px;
 }
 
+.scramble h2 {
+    width: 100%;
+}
+
+#myRange {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 15px;
+    border-radius: 5px;  
+    background: #d3d3d3;
+    outline: none;
+    opacity: 1;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    margin-top: 20px;
+}
+  
+#myRange::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%; 
+    background: #BF5443;
+    cursor: pointer;
+}
+  
+#myRange::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #BF5443;
+    cursor: pointer;
+}
+
+.slidecontainer {
+    width: 80%;
+}
+
+.slidecontainer label {
+    display: block;
+    margin-left: 30%;
+}

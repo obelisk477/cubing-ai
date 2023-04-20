@@ -15,6 +15,8 @@ var interval = null;
 let arr = []
 let tableBody = document.getElementsByTagName('tbody')[0]
 let scrambleElem = document.getElementById('scramble')
+let difficultyPreference = Number(document.getElementById('myRange').value)/100
+let difficultyLabel = document.querySelector('.slidecontainer label')
 let savedNet = {
     "type": "NeuralNetwork",
     "sizes": [
@@ -1073,8 +1075,8 @@ let addTableData = function(arr) {
         let newTime = document.createElement('td')
         let closeBtnCell = document.createElement('td')
         let btnSpan = document.createElement('span')
-        btnSpan.innerText = 'x'
-        btnSpan.addEventListener('click', handleDelete)
+        btnSpan.innerText = 'X'
+        closeBtnCell.addEventListener('click', handleDelete)
         closeBtnCell.appendChild(btnSpan)
         newRow.append(closeBtnCell, newSolveNum, newTime)
         newSolveNum.innerText = arr.length == 1 ? lastEntry + 1 : j
@@ -1162,7 +1164,15 @@ function logData() {
 document.addEventListener('keyup', timerStart)
 document.addEventListener('keydown', timerStop)
 // document.querySelector('#train').addEventListener('click', runTraining)
-document.getElementById('myRange').addEventListener('change', getScramble)
+document.getElementById('myRange').addEventListener('change', () => {
+    getScramble()
+    let localMax = Number(document.getElementById('myRange').max)
+    let localMin = Number(document.getElementById('myRange').min)
+
+    difficultyPreference = Number(document.getElementById('myRange').value)
+    let labelOutput = Math.round((difficultyPreference-localMin)/(localMax-localMin)*100)
+    difficultyLabel.innerText = "Difficulty: " + labelOutput
+})
 document.addEventListener('DOMContentLoaded', () => {
     if (!localStorage.getItem('times')) {
         return
