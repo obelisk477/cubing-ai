@@ -17,6 +17,7 @@ let tableBody = document.getElementsByTagName('tbody')[0]
 let scrambleElem = document.getElementById('scramble')
 let difficultyPreference = Number(document.getElementById('myRange').value)/100
 let difficultyLabel = document.querySelector('.slidecontainer label')
+let timeTableRows = document.querySelectorAll('.table-container > table tr')
 let savedNet = {
     "type": "NeuralNetwork",
     "sizes": [
@@ -942,7 +943,6 @@ function runTraining() {
 
 async function getScramble() {
     let difficultyPreference = Number(document.getElementById('myRange').value)/100
-    console.log(difficultyPreference)
     
     // Set loading text
     let scrambleElem = document.getElementById('scramble')
@@ -1033,7 +1033,7 @@ function updateStats() {
     let justTimes = data.map(row => row[0])
     let currentStats = [avgLastNofArr(justTimes,3),avgLastNofArr(justTimes,5),avgLastNofArr(justTimes,12)]
     for (let k=0; k < currentTds.length; k++) {
-        currentTds[k].innerText = currentStats[k].toFixed(2)
+        currentTds[k].innerText = typeof currentStats[k] == 'number' ? currentStats[k].toFixed(2) : '--'
 
         if (bestTimes[k].innerText == '--' || Number(currentTds[k].innerText) < Number(bestTimes[k].innerText)) {
             bestTimes[k].innerText = currentTds[k].innerText
@@ -1100,6 +1100,17 @@ let handleDelete = function(event) {
         timeTable[j].querySelectorAll('td')[1].innerText = j
     }
     updateStats()
+    iterateHistorical()
+}
+
+let iterateHistorical = function() {
+    let timeTableRows = document.querySelectorAll('.table-container tr > td:nth-child(3)')
+    let arr = [...timeTableRows].map((solveTimeElem) => Number(solveTimeElem.innerText))
+    console.log(arr)
+    for (let i=2; i< 5; i++) {
+        // return best averages
+    }
+    return
 }
 
 let timerStart = function(event) {
