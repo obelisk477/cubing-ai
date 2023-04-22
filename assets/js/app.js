@@ -1137,9 +1137,9 @@ let iterateHistorical = function() {
     }
 
     let bestTimes = document.getElementById('best-avg').querySelectorAll('tr td:nth-child(2)')
-    bestTimes[0].innerText = Number(bo3).toFixed(2)
-    bestTimes[1].innerText = Number(ao5).toFixed(2)
-    bestTimes[2].innerText = Number(ao12).toFixed(2)
+    bestTimes[0].innerText = bo3 === 100000 ? '--' : Number(bo3).toFixed(2)
+    bestTimes[1].innerText = ao5 === 100000 ? '--' : Number(ao5).toFixed(2)
+    bestTimes[2].innerText = ao12 === 100000 ? '--' : Number(ao12).toFixed(2)
     return
 }
 
