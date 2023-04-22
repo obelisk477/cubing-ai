@@ -903,7 +903,6 @@ function prepTestData() {
         .catch(error => console.log(error));
 }
 
-
 function trainNN(trainingData, netName) {
     const config = {
         binaryThresh: 0.5,
@@ -1107,9 +1106,40 @@ let iterateHistorical = function() {
     let timeTableRows = document.querySelectorAll('.table-container tr > td:nth-child(3)')
     let arr = [...timeTableRows].map((solveTimeElem) => Number(solveTimeElem.innerText))
     console.log(arr)
-    for (let i=2; i< 5; i++) {
-        // return best averages
+
+    let bo3 = 100000
+    let ao5 = 100000
+    let ao12 = 100000
+
+    if (arr.length >= 3) {
+        for (let i=0; i < arr.length-2; i++) {
+            let currentThree = (arr[i]+arr[i+1]+arr[i+2])/3
+            bo3 = currentThree < bo3 ? currentThree : bo3
+        }
     }
+    if (arr.length >= 5) {
+        for (let i=0; i < arr.length-4; i++) {
+            let tempArr = arr.slice(i,i+5)
+            tempArr.splice(tempArr.indexOf(Math.max(...tempArr)),1)
+            tempArr.splice(tempArr.indexOf(Math.min(...tempArr)),1)
+            let currentFive = tempArr.reduce((total,current) => total + current)/tempArr.length
+            ao5 = currentFive < ao5 ? currentFive : ao5
+        }
+    }
+    if (arr.length >= 12) {
+        for (let i=0; i < arr.length-11; i++) {
+            let tempArr = arr.slice(i,i+12)
+            tempArr.splice(tempArr.indexOf(Math.max(...tempArr)),1)
+            tempArr.splice(tempArr.indexOf(Math.min(...tempArr)),1)
+            let currentTwelve = tempArr.reduce((total,current) => total + current)/tempArr.length
+            ao12 = currentTwelve < ao12 ? currentTwelve : ao12
+        }
+    }
+
+    let bestTimes = document.getElementById('best-avg').querySelectorAll('tr td:nth-child(2)')
+    bestTimes[0].innerText = Number(bo3).toFixed(2)
+    bestTimes[1].innerText = Number(ao5).toFixed(2)
+    bestTimes[2].innerText = Number(ao12).toFixed(2)
     return
 }
 
