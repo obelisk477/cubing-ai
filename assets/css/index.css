@@ -114,6 +114,11 @@ table {
     margin: 0 auto;
 }
 
+#delete-all {
+    font-weight: bolder;
+    color: red;
+}
+
 tr:nth-child(odd) {
     background-color:#BF5443;
 }
@@ -132,7 +137,7 @@ td, th {
     border-radius: 5px;
 }
 
-tr > td:nth-child(1):hover {
+tr > td:nth-child(1):hover, #delete-all:hover {
     cursor: pointer;
 }
 

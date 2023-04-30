@@ -24639,6 +24639,7 @@ highp float nrand(highp vec2 n) {
             const { preparedData } = this.prepTraining(data);
             // for binary classification problems with one output node
             const isBinary = preparedData[0].output.length === 1;
+            console.log(preparedData[0])
             // for classification problems
             const misclasses = [];
             // run each pattern through the trained network and collect
@@ -24677,10 +24678,10 @@ highp float nrand(highp vec2 n) {
                     }
                     errorSum += mse$1(output.map((value, i) => {
                         return target[i] - value;
-                    }));
+                    }))
                 }
                 return {
-                    error: errorSum / preparedData.length,
+                    error: Math.sqrt(errorSum / preparedData.length),
                     misclasses,
                     total: preparedData.length,
                     trueNeg,
@@ -24714,6 +24715,7 @@ highp float nrand(highp vec2 n) {
                 error: errorSum / preparedData.length,
                 misclasses,
                 total: preparedData.length,
+                greeting: "hello2"
             };
         }
         toJSON() {
