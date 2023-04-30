@@ -9,9 +9,12 @@ var interval = null
 let arr = []
 let tableBody = document.getElementsByTagName('tbody')[0]
 let scrambleElem = document.getElementById('scramble')
+let deleteAllBtn = document.querySelector('#delete-all')
 let difficultyPreference = Number(document.getElementById('myRange').value)/100
+let bestTimes = document.getElementById('best-avg').querySelectorAll('tr td:nth-child(2)')
 let difficultyLabel = document.querySelector('.slidecontainer label')
 let net = new brain.NeuralNetwork(config);
+let potentialNet = new brain.NeuralNetwork(config);
 
 function processDataForNN(preProcessedData) {
     let inputArr = []
@@ -56,8 +59,9 @@ function prepTestData() {
                 if (j == lines.length - 1) {
                     lines = processDataForNN(lines)
                     console.log("testing")
-                    console.log(net)
-                    console.log(net.test(lines))
+                    console.log(potentialNet)
+                    console.log({lines}[0])
+                    console.log(potentialNet.test(lines))
                 }
             })
         }
@@ -69,19 +73,22 @@ function prepTestData() {
 function trainNN(trainingData, netName) {
     const config = {
         binaryThresh: 0.5,
-        hiddenLayers: [15,6], // array of ints for the sizes of the hidden layers in the network
+        hiddenLayers: [10], // array of ints for the sizes of the hidden layers in the network
         activation: 'tanh', // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
         leakyReluAlpha: 0.01, // supported for activation type 'leaky-relu'
-        learningRate: 0.3
+        learningRate: 0.016
     };
     
     // create a simple feed forward neural network with backpropagation
-    net = new brain.NeuralNetwork(config);
-    net
-        .trainAsync(trainingData, {log: true, iterations: 1500, logPeriod: 50})
+    
+    // currently 0.2143
+    potentialNet = new brain.NeuralNetwork(config);
+
+    potentialNet
+        .trainAsync(trainingData, {log: true, iterations: 2, logPeriod: 50})
         .then((res) => {
-            localStorage.setItem(netName, JSON.stringify(net.toFunction().toString()))
-            localStorage.setItem('EllisNetObj', JSON.stringify(net.toJSON()))
+            localStorage.setItem(netName, JSON.stringify(potentialNet.toFunction().toString()))
+            localStorage.setItem('EllisNetObj', JSON.stringify(potentialNet.toJSON()))
             console.log("trained")
             prepTestData()
         
@@ -89,7 +96,7 @@ function trainNN(trainingData, netName) {
         .catch((e) => {
             console.log(e)
         })
-    return net
+    return potentialNet
 }
 
 function runTraining() {
@@ -105,7 +112,7 @@ function runTraining() {
 
 async function getScramble() {
     let difficultyPreference = Number(document.getElementById('myRange').value)/100
-    
+
     // Set loading text
     let scrambleElem = document.getElementById('scramble')
     scrambleElem.innerText = "Loading..."
@@ -116,27 +123,17 @@ async function getScramble() {
 
     // Get scramble and puzzle instance from cubing.js CDN
     let scramble = await randomScrambleForEvent("333");
-    let kPuzzle = await puzzles['3x3x3']['kpuzzle']()
-
-    // Turn scramble into array of piece info and pass into NN, saving value of difficulty
-    let transformationData = kPuzzle.algToTransformation(scramble).transformationData
-    let eo = transformationData.EDGES.orientation.map(x => Math.max(...transformationData.EDGES.orientation) === 0 ? 0 : x/Math.max(...transformationData.EDGES.orientation))
-    let ep = transformationData.EDGES.permutation.map(x => Math.max(...transformationData.EDGES.permutation) === 0 ? 0 : x/Math.max(...transformationData.EDGES.permutation))
-    let co = transformationData.CORNERS.orientation.map(x => Math.max(...transformationData.CORNERS.orientation) === 0 ? 0 : x/Math.max(...transformationData.CORNERS.orientation))
-    let cp = transformationData.CORNERS.permutation.map(x => Math.max(...transformationData.CORNERS.permutation) === 0 ? 0 : x/Math.max(...transformationData.CORNERS.permutation))
-    let mergedArr = [...eo, ...ep, ...co, ...cp]
+    let mergedArr = await processKPuzzle(scramble)
     let scrambleDifficulty = net.run(mergedArr)[0]
     console.log(scrambleDifficulty)
-
     // Check if scramble hard enough and log to screen
-
-    if (difficultyPreference >.5) {
+    if (difficultyPreference >.4) {
         if (scrambleDifficulty > difficultyPreference) {
             scrambleElem.innerText = scramble
         } else {
             getScramble()
         }
-    } else if (difficultyPreference < .5) {
+    } else if (difficultyPreference < .4) {
         if (scrambleDifficulty < difficultyPreference) {
             scrambleElem.innerText = scramble
         } else {
@@ -159,7 +156,7 @@ async function processKPuzzle(scram) {
     let ep = transformationData.EDGES.permutation.map(x => Math.max(...transformationData.EDGES.permutation) === 0 ? 0 : x/Math.max(...transformationData.EDGES.permutation))
     let co = transformationData.CORNERS.orientation.map(x => Math.max(...transformationData.CORNERS.orientation) === 0 ? 0 : x/Math.max(...transformationData.CORNERS.orientation))
     let cp = transformationData.CORNERS.permutation.map(x => Math.max(...transformationData.CORNERS.permutation) === 0 ? 0 : x/Math.max(...transformationData.CORNERS.permutation))
-    let mergedArr = [...eo, ...ep, ...co, ...cp]
+    let mergedArr = [...eo, ...ep] //    let mergedArr = [...eo, ...ep, ...co, ...cp]
     return mergedArr
 }
 
@@ -191,7 +188,6 @@ let updateTimeLog = async function(time) {
 function updateStats() {
     let data = JSON.parse(localStorage.getItem('times'))
     let currentTds = document.getElementById('current-avg').querySelectorAll('tr td:nth-child(2)')
-    let bestTimes = document.getElementById('best-avg').querySelectorAll('tr td:nth-child(2)')
     let justTimes = data.map(row => row[0])
     let currentStats = [avgLastNofArr(justTimes,3),avgLastNofArr(justTimes,5),avgLastNofArr(justTimes,12)]
     for (let k=0; k < currentTds.length; k++) {
@@ -221,11 +217,10 @@ function avgLastNofArr(arr, n) {
     if (numTimesToRemove != 0) {
         let half = Math.round(numTimesToRemove/2)
         for (let i = 0; i < half; i++) {
-            arr.splice(arr.indexOf(Math.max(...arr)),1)
-            arr.splice(arr.indexOf(Math.min(...arr)),1)
+            arr = removeMaxAndMin(arr)
         }
     }
-
+    
     return arr.reduce((total,current) => total + current)/arr.length
 }
 
@@ -236,10 +231,8 @@ let addTableData = function(arr) {
         let newSolveNum = document.createElement('td')
         let newTime = document.createElement('td')
         let closeBtnCell = document.createElement('td')
-        let btnSpan = document.createElement('span')
-        btnSpan.innerText = 'X'
+        closeBtnCell.innerText = 'X'
         closeBtnCell.addEventListener('click', handleDelete)
-        closeBtnCell.appendChild(btnSpan)
         newRow.append(closeBtnCell, newSolveNum, newTime)
         newSolveNum.innerText = arr.length == 1 ? lastEntry + 1 : j
         newTime.innerText = arr[j-1][0].toFixed(2)
@@ -268,7 +261,6 @@ let handleDelete = function(event) {
 let iterateHistorical = function() {
     let timeTableRows = document.querySelectorAll('.table-container tr > td:nth-child(3)')
     let arr = [...timeTableRows].map((solveTimeElem) => Number(solveTimeElem.innerText))
-    console.log(arr)
 
     let bo3 = 100000
     let ao5 = 100000
@@ -282,28 +274,29 @@ let iterateHistorical = function() {
     }
     if (arr.length >= 5) {
         for (let i=0; i < arr.length-4; i++) {
-            let tempArr = arr.slice(i,i+5)
-            tempArr.splice(tempArr.indexOf(Math.max(...tempArr)),1)
-            tempArr.splice(tempArr.indexOf(Math.min(...tempArr)),1)
+            let tempArr = removeMaxAndMin(arr.slice(i,i+5))
             let currentFive = tempArr.reduce((total,current) => total + current)/tempArr.length
             ao5 = currentFive < ao5 ? currentFive : ao5
         }
     }
     if (arr.length >= 12) {
         for (let i=0; i < arr.length-11; i++) {
-            let tempArr = arr.slice(i,i+12)
-            tempArr.splice(tempArr.indexOf(Math.max(...tempArr)),1)
-            tempArr.splice(tempArr.indexOf(Math.min(...tempArr)),1)
+            let tempArr = removeMaxAndMin(arr.slice(i,i+12))
             let currentTwelve = tempArr.reduce((total,current) => total + current)/tempArr.length
             ao12 = currentTwelve < ao12 ? currentTwelve : ao12
         }
     }
 
-    let bestTimes = document.getElementById('best-avg').querySelectorAll('tr td:nth-child(2)')
     bestTimes[0].innerText = bo3 === 100000 ? '--' : Number(bo3).toFixed(2)
     bestTimes[1].innerText = ao5 === 100000 ? '--' : Number(ao5).toFixed(2)
     bestTimes[2].innerText = ao12 === 100000 ? '--' : Number(ao12).toFixed(2)
     return
+}
+
+let removeMaxAndMin = function(arr) {
+    arr.splice(arr.indexOf(Math.max(...arr)),1)
+    arr.splice(arr.indexOf(Math.min(...arr)),1)
+    return arr
 }
 
 let handleSpaceUp = function(event) {
@@ -323,7 +316,12 @@ let handleSpaceUp = function(event) {
 
 let handleSpaceDown = function(event) {
     if (event.code == 'Space') {
-        isRunning ? clearInterval(interval) : timer.style.color = 'green'
+        if(isRunning) {
+            clearInterval(interval)
+        } else {
+            timer.style.color = 'green'
+            timer.innerText = Number(0).toFixed(2)
+        } 
     }   
 }
 
@@ -332,9 +330,8 @@ function logData() {
     fetch("./assets/Ellis_solves.csv")
         .then(response => response.text())
         .then(data => {
-        // Split the data into an array of lines
-        var lines = data.split('\r\n');
 
+        var lines = data.split('\r\n');
         // Loop through each line
         lines = lines.map((line) => [Number(line.split(',')[1]),line.split(',')[2]])
 
@@ -343,10 +340,7 @@ function logData() {
                 lines[j].push(value)
                 if (j == lines.length - 1) {
                     lines = processDataForNN(lines)
-                    console.log(lines)
-
                     trainNN(lines, 'EllisNet')
-                
                 }
             })
         }
@@ -355,9 +349,29 @@ function logData() {
         .catch(error => console.log(error));
 }
 
+let someFunc = function() {
+    if (confirm("Are you sure you want to reset your session?")) {
+        localStorage.setItem('times',JSON.stringify([]))
+        let bestTimes = document.getElementById('best-avg').querySelectorAll('tr td:nth-child(2)')
+        let currentTimes = document.getElementById('current-avg').querySelectorAll('tr td:nth-child(2)')
+        let records = document.querySelectorAll('div.card.time-table > div.table-container > table > tbody > tr')
+        currentTimes.forEach((time, i) => {
+            time.innerText = bestTimes[i].innerText = "--"
+        })
+        records.forEach((record,i) => {
+            if(i>0) {
+                record.remove()
+            }
+        })
+      }
+
+    
+}
+
 // logData()
 
 // Event Listeners
+deleteAllBtn.addEventListener('click', someFunc)
 document.addEventListener('keyup', handleSpaceUp)
 document.addEventListener('keydown', handleSpaceDown)
 // document.querySelector('#train').addEventListener('click', runTraining)
@@ -378,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
     addTableData(myArr)
     updateStats()
 
-    fetch("./assets/js/net.json")
+    fetch("./assets/js/potentialNet.json")
     .then(response => {
         return response.json()
     })
@@ -388,4 +402,3 @@ document.addEventListener('DOMContentLoaded', () => {
         getScramble()
     })
 })
-
