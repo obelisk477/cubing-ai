@@ -43,8 +43,8 @@ function processDataForNN(preProcessedData) {
 }
 
 function prepTestData() {
-
-    fetch("./assets/Ellis_test.csv")
+    console.log("prepping test...")
+    fetch("./assets/Mills_test.csv")
         .then(response => response.text())
         .then(data => {
         // Split the data into an array of lines
@@ -73,22 +73,22 @@ function prepTestData() {
 function trainNN(trainingData, netName) {
     const config = {
         binaryThresh: 0.5,
-        hiddenLayers: [10], // array of ints for the sizes of the hidden layers in the network
+        hiddenLayers: [7], // array of ints for the sizes of the hidden layers in the network
         activation: 'tanh', // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
         leakyReluAlpha: 0.01, // supported for activation type 'leaky-relu'
-        learningRate: 0.016
+        learningRate: 0.0008
     };
     
     // create a simple feed forward neural network with backpropagation
     
-    // currently 0.2143
+    // currently 0.20204
     potentialNet = new brain.NeuralNetwork(config);
-
+    console.log("training...")
     potentialNet
-        .trainAsync(trainingData, {log: true, iterations: 2, logPeriod: 50})
+        .trainAsync(trainingData, {log: true, iterations: 10000, logPeriod: 25})
         .then((res) => {
             localStorage.setItem(netName, JSON.stringify(potentialNet.toFunction().toString()))
-            localStorage.setItem('EllisNetObj', JSON.stringify(potentialNet.toJSON()))
+            localStorage.setItem('MillsNetObj', JSON.stringify(potentialNet.toJSON()))
             console.log("trained")
             prepTestData()
         
@@ -118,7 +118,7 @@ async function getScramble() {
     scrambleElem.innerText = "Loading..."
 
     // Get saved NN and make into function
-    let netLS = JSON.parse(localStorage.getItem('EllisNet'))
+    let netLS = JSON.parse(localStorage.getItem('MillsNet'))
     var myFunc = eval('(' + netLS + ')');
 
     // Get scramble and puzzle instance from cubing.js CDN
@@ -327,7 +327,7 @@ let handleSpaceDown = function(event) {
 
 function logData() {
 
-    fetch("./assets/Ellis_solves.csv")
+    fetch("./assets/Mills_solves.csv")
         .then(response => response.text())
         .then(data => {
 
@@ -340,7 +340,7 @@ function logData() {
                 lines[j].push(value)
                 if (j == lines.length - 1) {
                     lines = processDataForNN(lines)
-                    trainNN(lines, 'EllisNet')
+                    trainNN(lines, 'MillsNet')
                 }
             })
         }
