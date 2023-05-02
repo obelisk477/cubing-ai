@@ -156,6 +156,19 @@ tr > td:nth-child(1):hover, #delete-all:hover {
     width: 100%;
 }
 
+.scramble label {
+    width: 100%;
+    text-align: center;
+}
+
+#net-selector {
+    height: 10%;
+    background-color: rgba(238, 230, 230, 0.82);
+    border: none;
+    padding: 0 10px; 
+    border-radius: 5px;
+}
+
 #myRange {
     -webkit-appearance: none;
     width: 100%;

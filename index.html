@@ -79,10 +79,15 @@
             <p><em>Press spacebar to begin timer</em></p>
         </div>
         <div class ="card scramble">
-            <h2>Hello</h2>
+            <label for="net-selector">Choose your AI:</label>
+            <select name="nets" id="net-selector">
+                <option value="WhiteYellow">CFOP (White/Yellow)</option>
+                <option value="CFOPCN">CFOP (Color Neutral)</option>
+            </select>
+            
             <div class="slidecontainer">
                 <label for="myRange">Difficulty: 50</label>
-                <input type="range" min="36" max="44" value="40" class="slider" id="myRange">
+                <input type="range" min="37" max="43" value="40" class="slider" id="myRange">
             </div>
             <!-- <button id="train">Train</button> -->
         </div>

@@ -73,10 +73,10 @@ function prepTestData() {
 function trainNN(trainingData, netName) {
     const config = {
         binaryThresh: 0.5,
-        hiddenLayers: [7], // array of ints for the sizes of the hidden layers in the network
+        hiddenLayers: [6], // array of ints for the sizes of the hidden layers in the network
         activation: 'tanh', // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
         leakyReluAlpha: 0.01, // supported for activation type 'leaky-relu'
-        learningRate: 0.0008
+        learningRate: 0.001
     };
     
     // create a simple feed forward neural network with backpropagation
@@ -85,10 +85,10 @@ function trainNN(trainingData, netName) {
     potentialNet = new brain.NeuralNetwork(config);
     console.log("training...")
     potentialNet
-        .trainAsync(trainingData, {log: true, iterations: 10000, logPeriod: 25})
+        .trainAsync(trainingData, {log: true, iterations: 5000, logPeriod: 25})
         .then((res) => {
             localStorage.setItem(netName, JSON.stringify(potentialNet.toFunction().toString()))
-            localStorage.setItem('MillsNetObj', JSON.stringify(potentialNet.toJSON()))
+            localStorage.setItem('BrownNetObj', JSON.stringify(potentialNet.toJSON()))
             console.log("trained")
             prepTestData()
         
@@ -118,7 +118,7 @@ async function getScramble() {
     scrambleElem.innerText = "Loading..."
 
     // Get saved NN and make into function
-    let netLS = JSON.parse(localStorage.getItem('MillsNet'))
+    let netLS = JSON.parse(localStorage.getItem('BrownNet'))
     var myFunc = eval('(' + netLS + ')');
 
     // Get scramble and puzzle instance from cubing.js CDN
@@ -156,7 +156,8 @@ async function processKPuzzle(scram) {
     let ep = transformationData.EDGES.permutation.map(x => Math.max(...transformationData.EDGES.permutation) === 0 ? 0 : x/Math.max(...transformationData.EDGES.permutation))
     let co = transformationData.CORNERS.orientation.map(x => Math.max(...transformationData.CORNERS.orientation) === 0 ? 0 : x/Math.max(...transformationData.CORNERS.orientation))
     let cp = transformationData.CORNERS.permutation.map(x => Math.max(...transformationData.CORNERS.permutation) === 0 ? 0 : x/Math.max(...transformationData.CORNERS.permutation))
-    let mergedArr = [...eo, ...ep] //    let mergedArr = [...eo, ...ep, ...co, ...cp]
+    // let mergedArr = [...eo, ...ep, ...co, ...cp]
+    let mergedArr = [...eo, ...ep] 
     return mergedArr
 }
 
@@ -340,7 +341,7 @@ function logData() {
                 lines[j].push(value)
                 if (j == lines.length - 1) {
                     lines = processDataForNN(lines)
-                    trainNN(lines, 'MillsNet')
+                    trainNN(lines, 'BrownNet')
                 }
             })
         }
@@ -381,8 +382,21 @@ document.getElementById('myRange').addEventListener('change', () => {
     let localMin = Number(document.getElementById('myRange').min)
 
     difficultyPreference = Number(document.getElementById('myRange').value)
+    console.log(difficultyPreference)
     let labelOutput = Math.round((difficultyPreference-localMin)/(localMax-localMin)*100)
     difficultyLabel.innerText = "Difficulty: " + labelOutput
+})
+document.getElementById('net-selector').addEventListener('change', () => {
+    let choice = document.getElementById('net-selector').value
+    fetch("./assets/js/"+choice+".json")
+    .then(response => {
+        return response.json()
+    })
+    .then(data => {
+        net.fromJSON(data)
+        getScramble()
+    })
+
 })
 document.addEventListener('DOMContentLoaded', () => {
     if (!localStorage.getItem('times')) {
@@ -392,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
     addTableData(myArr)
     updateStats()
 
-    fetch("./assets/js/potentialNet.json")
+    fetch("./assets/js/WhiteYellow.json")
     .then(response => {
         return response.json()
     })
