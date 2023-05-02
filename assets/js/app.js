@@ -111,7 +111,8 @@ function runTraining() {
 }
 
 async function getScramble() {
-    let difficultyPreference = Number(document.getElementById('myRange').value)/100
+    let difficultyPreference = Number(document.getElementById('myRange').value)/1000
+    console.log(difficultyPreference)
 
     // Set loading text
     let scrambleElem = document.getElementById('scramble')
@@ -127,20 +128,20 @@ async function getScramble() {
     let scrambleDifficulty = net.run(mergedArr)[0]
     console.log(scrambleDifficulty)
     // Check if scramble hard enough and log to screen
-    if (difficultyPreference >.4) {
+    if (difficultyPreference >.407) {
         if (scrambleDifficulty > difficultyPreference) {
             scrambleElem.innerText = scramble
         } else {
             getScramble()
         }
-    } else if (difficultyPreference < .4) {
+    } else if (difficultyPreference < .407) {
         if (scrambleDifficulty < difficultyPreference) {
             scrambleElem.innerText = scramble
         } else {
             getScramble()
         }
     } else {
-        if (scrambleDifficulty < .9999) {
+        if (scrambleDifficulty < .999999) {
             scrambleElem.innerText = scramble
         } else {
             getScramble()
