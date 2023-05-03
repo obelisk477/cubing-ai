@@ -351,7 +351,7 @@ function logData() {
         .catch(error => console.log(error));
 }
 
-let someFunc = function() {
+let deleteAllTimes = function() {
     if (confirm("Are you sure you want to reset your session?")) {
         localStorage.setItem('times',JSON.stringify([]))
         let bestTimes = document.getElementById('best-avg').querySelectorAll('tr td:nth-child(2)')
@@ -373,7 +373,7 @@ let someFunc = function() {
 // logData()
 
 // Event Listeners
-deleteAllBtn.addEventListener('click', someFunc)
+deleteAllBtn.addEventListener('click', deleteAllTimes)
 document.addEventListener('keyup', handleSpaceUp)
 document.addEventListener('keydown', handleSpaceDown)
 // document.querySelector('#train').addEventListener('click', runTraining)
@@ -401,8 +401,9 @@ document.getElementById('net-selector').addEventListener('change', () => {
 })
 document.addEventListener('DOMContentLoaded', () => {
     if (!localStorage.getItem('times')) {
-        return
+        localStorage.setItem('times',JSON.stringify([]))
     }
+    
     let myArr = JSON.parse(localStorage.getItem('times'))
     addTableData(myArr)
     updateStats()
