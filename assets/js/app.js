@@ -173,8 +173,8 @@ let updateTimeLog = async function(time) {
         localStorage.setItem('times', JSON.stringify(arr))
     }
 
-    // Subtract 4 tr's from the stat list, and another to adjust for index
-    let currentNumOfTimes = document.querySelectorAll('tr').length - 9
+    // Subtract 13 tr's from the stat list, and another to adjust for index
+    let currentNumOfTimes = document.querySelectorAll('tr').length - 13
     arr = arr.slice(currentNumOfTimes, arr.length)
 
     addTableData(arr)
@@ -191,7 +191,7 @@ function updateStats() {
     let data = JSON.parse(localStorage.getItem('times'))
     let currentTds = document.getElementById('current-avg').querySelectorAll('tr td:nth-child(2)')
     let justTimes = data.map(row => row[0])
-    let currentStats = [avgLastNofArr(justTimes,3),avgLastNofArr(justTimes,5),avgLastNofArr(justTimes,12)]
+    let currentStats = [avgLastNofArr(justTimes,3),avgLastNofArr(justTimes,5),avgLastNofArr(justTimes,12),avgLastNofArr(justTimes,25),avgLastNofArr(justTimes,100)]
     for (let k=0; k < currentTds.length; k++) {
         currentTds[k].innerText = typeof currentStats[k] == 'number' ? currentStats[k].toFixed(2) : '--'
 
@@ -365,9 +365,7 @@ let deleteAllTimes = function() {
                 record.remove()
             }
         })
-      }
-
-    
+      }    
 }
 
 // logData()
@@ -403,7 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!localStorage.getItem('times')) {
         localStorage.setItem('times',JSON.stringify([]))
     }
-    
+
     let myArr = JSON.parse(localStorage.getItem('times'))
     addTableData(myArr)
     updateStats()
