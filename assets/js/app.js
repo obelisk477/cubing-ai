@@ -189,9 +189,14 @@ let updateTimeLog = async function(time) {
 
 function updateStats() {
     let data = JSON.parse(localStorage.getItem('times'))
+    let singles = document.getElementById('stats').querySelectorAll('tr th:nth-child(2)')
     let currentTds = document.getElementById('current-avg').querySelectorAll('tr td:nth-child(2)')
     let justTimes = data.map(row => row[0])
     let currentStats = [avgLastNofArr(justTimes,3),avgLastNofArr(justTimes,5),avgLastNofArr(justTimes,12),avgLastNofArr(justTimes,25),avgLastNofArr(justTimes,100)]
+    if (justTimes.length > 0) {
+        singles[0].innerText = Number(Math.min(...justTimes)).toFixed(2)
+        singles[1].innerText = Number(justTimes[justTimes.length-1]).toFixed(2)
+    }
     for (let k=0; k < currentTds.length; k++) {
         currentTds[k].innerText = typeof currentStats[k] == 'number' ? currentStats[k].toFixed(2) : '--'
 
@@ -357,6 +362,8 @@ let deleteAllTimes = function() {
         let bestTimes = document.getElementById('best-avg').querySelectorAll('tr td:nth-child(2)')
         let currentTimes = document.getElementById('current-avg').querySelectorAll('tr td:nth-child(2)')
         let records = document.querySelectorAll('div.card.time-table > div.table-container > table > tbody > tr')
+        let singles = document.getElementById('stats').querySelectorAll('tr th:nth-child(2)')
+        singles[0].innerText = singles[1].innerText = '--'
         currentTimes.forEach((time, i) => {
             time.innerText = bestTimes[i].innerText = "--"
         })
