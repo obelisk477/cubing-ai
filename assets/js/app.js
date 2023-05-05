@@ -131,34 +131,30 @@ async function getScramble() {
     if (difficultyPreference >.407) {
         if (scrambleDifficulty > difficultyPreference) {
             scrambleElem.innerText = scramble
-        } else {
-            getScramble()
+            return
         }
     } else if (difficultyPreference < .407) {
         if (scrambleDifficulty < difficultyPreference) {
             scrambleElem.innerText = scramble
-        } else {
-            getScramble()
-        }
+            return
+        } 
     } else {
         if (scrambleDifficulty < .999999) {
             scrambleElem.innerText = scramble
-        } else {
-            getScramble()
+            return
         }
     }
-    return
+    getScramble()
 }
 
 async function processKPuzzle(scram) {
     let kPuzzle = await puzzles['3x3x3']['kpuzzle']()
     let transformationData = kPuzzle.algToTransformation(scram).transformationData
-    let eo = transformationData.EDGES.orientation.map(x => Math.max(...transformationData.EDGES.orientation) === 0 ? 0 : x/Math.max(...transformationData.EDGES.orientation))
-    let ep = transformationData.EDGES.permutation.map(x => Math.max(...transformationData.EDGES.permutation) === 0 ? 0 : x/Math.max(...transformationData.EDGES.permutation))
-    let co = transformationData.CORNERS.orientation.map(x => Math.max(...transformationData.CORNERS.orientation) === 0 ? 0 : x/Math.max(...transformationData.CORNERS.orientation))
-    let cp = transformationData.CORNERS.permutation.map(x => Math.max(...transformationData.CORNERS.permutation) === 0 ? 0 : x/Math.max(...transformationData.CORNERS.permutation))
-    // let mergedArr = [...eo, ...ep, ...co, ...cp]
-    let mergedArr = [...eo, ...ep] 
+    let { EDGES: {orientation: edgeOrient, permutation: edgePermute}, CORNERS: {orientation: cornerOrient, permutation: cornerPermute} } = transformationData
+    // Only uses edges for now; no need to normalize EO as it is already normalized (because it's binary)
+    let normalizedEdgePermute = edgePermute.map(y => Math.max(...edgePermute) == 0 ? 0 : y/Math.max(...edgePermute))
+    let mergedArr = edgeOrient.concat(normalizedEdgePermute)
+
     return mergedArr
 }
 
@@ -242,7 +238,7 @@ let addTableData = function(arr) {
         closeBtnCell.addEventListener('click', handleDelete)
         newRow.append(closeBtnCell, newSolveNum, newTime)
         newSolveNum.innerText = arr.length == 1 ? lastEntry + 1 : j
-        newTime.innerText = arr[j-1][0].toFixed(2)
+        newTime.innerText = ""+arr[j-1][0].toFixed(2)+""
         tableBody.appendChild(newRow)
     }
 }
