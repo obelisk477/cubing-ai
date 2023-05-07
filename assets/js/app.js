@@ -15,6 +15,7 @@ let bestTimes = document.getElementById('best-avg').querySelectorAll('tr td:nth-
 let difficultyLabel = document.querySelector('.slidecontainer label')
 let net = new brain.NeuralNetwork(config);
 let potentialNet = new brain.NeuralNetwork(config);
+let modal = document.querySelector('.modal')
 
 function processDataForNN(preProcessedData) {
     let inputArr = []
@@ -238,6 +239,7 @@ let addTableData = function(arr) {
         closeBtnCell.addEventListener('click', handleDelete)
         newRow.append(closeBtnCell, newSolveNum, newTime)
         newSolveNum.innerText = arr.length == 1 ? lastEntry + 1 : j
+        newTime.classList.add("time-record")
         newTime.innerText = ""+arr[j-1][0].toFixed(2)+""
         tableBody.appendChild(newRow)
     }
@@ -371,10 +373,24 @@ let deleteAllTimes = function() {
       }    
 }
 
+function handleTimeUpdate(event) {
+    if (event.target.className != "time-record") {
+        return
+    }
+    let timeModalText = document.querySelector('.modal p')
+    let timeToMod = event.target
+    let solveIndex = Number(event.target.previousSibling.innerHTML)-1
+    timeModalText.innerHTML = timeToMod.innerHTML
+    console.log(timeToMod)
+    console.log(solveIndex)
+    modal.showModal()
+}
+
 // logData()
 
 // Event Listeners
 deleteAllBtn.addEventListener('click', deleteAllTimes)
+tableBody.addEventListener('click', handleTimeUpdate)
 document.addEventListener('keyup', handleSpaceUp)
 document.addEventListener('keydown', handleSpaceDown)
 // document.querySelector('#train').addEventListener('click', runTraining)

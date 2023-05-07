@@ -212,3 +212,59 @@ tr > td:nth-child(1):hover, #delete-all:hover {
 .slidecontainer label {
     display: block;
 }
+
+tbody > tr td:nth-child(3):hover {
+    background-color: white;
+    opacity: 50%;
+    cursor: pointer;
+}
+
+.modal-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    padding: 0.5rem;
+    background: #e7e7e7e5;
+    border-radius: 0.25rem;
+    z-index: 10;
+    border: none;
+    font-size: 1.25rem;
+}
+
+.modal::backdrop {
+    background-color: rgba(102, 102, 102, 0.667)
+}
+
+.modal p {
+    text-align: center;
+    display: inline;
+    margin: 5px 5px 15px;
+}
+
+.inline-btn {
+    display: inline;
+    height: 20px;
+    margin: 8px 5px 15px;
+}
+
+.inline-btn, .formBtn {
+    border: none;
+    background: white;
+    border-radius: 2px;
+}
+
+.formBtn {
+    height: 1.4rem;
+}
+
+.modal form {
+    margin: 5px 5px 15px;
+}
+
+.modal form input {
+    border: none;
+    height: 1.4rem
+}
