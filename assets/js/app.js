@@ -16,6 +16,7 @@ let difficultyLabel = document.querySelector('.slidecontainer label')
 let net = new brain.NeuralNetwork(config);
 let potentialNet = new brain.NeuralNetwork(config);
 let modal = document.querySelector('.modal')
+let modalForm = document.querySelector('form')
 
 function processDataForNN(preProcessedData) {
     let inputArr = []
@@ -232,15 +233,9 @@ let addTableData = function(arr) {
     let lastEntry = tableBody.lastChild.children ? Number(tableBody.lastChild.children[1].innerText) : 0
     for (let j=1; j <= arr.length; j++) {
         let newRow = document.createElement('tr')
-        let newSolveNum = document.createElement('td')
-        let newTime = document.createElement('td')
-        let closeBtnCell = document.createElement('td')
-        closeBtnCell.innerText = 'X'
+        newRow.innerHTML = `<td>X</td><td>${arr.length == 1 ? lastEntry + 1 : j}</td><td class="time-record">${arr[j-1][0].toFixed(2)}</td>`
+        let closeBtnCell = newRow.querySelectorAll('td')[0]
         closeBtnCell.addEventListener('click', handleDelete)
-        newRow.append(closeBtnCell, newSolveNum, newTime)
-        newSolveNum.innerText = arr.length == 1 ? lastEntry + 1 : j
-        newTime.classList.add("time-record")
-        newTime.innerText = ""+arr[j-1][0].toFixed(2)+""
         tableBody.appendChild(newRow)
     }
 }

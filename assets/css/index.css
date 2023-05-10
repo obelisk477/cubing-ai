@@ -259,6 +259,9 @@ tbody > tr td:nth-child(3):hover {
 .formBtn {
     height: 1.4rem;
 }
+.formBtn:hover, .inline-btn:hover {
+    cursor: pointer;
+}
 
 .modal form {
     margin: 5px 5px 15px;
