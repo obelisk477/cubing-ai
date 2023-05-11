@@ -16,7 +16,7 @@ let difficultyLabel = document.querySelector('.slidecontainer label')
 let net = new brain.NeuralNetwork(config);
 let potentialNet = new brain.NeuralNetwork(config);
 let modal = document.querySelector('.modal')
-let modalForm = document.querySelector('form')
+let formSubmitBtn = document.querySelector('.formBtn')
 
 function processDataForNN(preProcessedData) {
     let inputArr = []
@@ -376,9 +376,23 @@ function handleTimeUpdate(event) {
     let timeToMod = event.target
     let solveIndex = Number(event.target.previousSibling.innerHTML)-1
     timeModalText.innerHTML = timeToMod.innerHTML
+    timeModalText.setAttribute('data-recordNum',solveIndex)
     console.log(timeToMod)
     console.log(solveIndex)
     modal.showModal()
+}
+
+
+function handleModalSubmit(event)  {
+    let inputElem = document.getElementById('manual-entry')
+    let input = Number(inputElem.value)
+    if (isNaN(input)) {
+        return
+    }
+    let recordNum = document.querySelector('.modal p').getAttribute('data-recordNum')
+    console.log(recordNum)
+
+    inputElem.value = ''
 }
 
 // logData()
@@ -388,6 +402,7 @@ deleteAllBtn.addEventListener('click', deleteAllTimes)
 tableBody.addEventListener('click', handleTimeUpdate)
 document.addEventListener('keyup', handleSpaceUp)
 document.addEventListener('keydown', handleSpaceDown)
+formSubmitBtn.addEventListener('click', handleModalSubmit)
 // document.querySelector('#train').addEventListener('click', runTraining)
 document.getElementById('myRange').addEventListener('change', () => {
     getScramble()

@@ -223,6 +223,7 @@ tbody > tr td:nth-child(3):hover {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .modal {
@@ -232,6 +233,7 @@ tbody > tr td:nth-child(3):hover {
     z-index: 10;
     border: none;
     font-size: 1.25rem;
+    width: 25%;
 }
 
 .modal::backdrop {
@@ -239,15 +241,15 @@ tbody > tr td:nth-child(3):hover {
 }
 
 .modal p {
-    text-align: center;
+    text-align: right;
     display: inline;
-    margin: 5px 5px 15px;
+    flex: 0 0 40%
 }
 
 .inline-btn {
-    display: inline;
-    height: 20px;
-    margin: 8px 5px 15px;
+    flex: 1 0 15%;
+    margin: 10px;
+    padding: 5px;
 }
 
 .inline-btn, .formBtn {
@@ -257,7 +259,8 @@ tbody > tr td:nth-child(3):hover {
 }
 
 .formBtn {
-    height: 1.4rem;
+    padding: 5px;
+    flex: 0 0 10%;
 }
 .formBtn:hover, .inline-btn:hover {
     cursor: pointer;
@@ -268,6 +271,13 @@ tbody > tr td:nth-child(3):hover {
 }
 
 .modal form input {
+    min-width: 0;
+    flex: 0 0 33%;
     border: none;
-    height: 1.4rem
+    height: 1.4rem;
+    margin: 11px;
+}
+.modal form label {
+    flex: 0 0 40%;
+    text-align: right;
 }
